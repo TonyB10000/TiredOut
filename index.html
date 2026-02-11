@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TIRED OUT - AI Tournament Edition</title>
+    <title>TIRED OUT - Precision Edition</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -22,21 +22,17 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useMemo } = React;
 
-        // --- Icons ---
         const IconTrophy = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>);
         const IconSettings = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>);
         const IconBook = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>);
-        const IconGift = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8V4H7a2 2 0 0 1 0-4 1 1 0 0 1 1 1 1 1 0 0 1 1 1h3z"/><path d="M12 8h5a2 2 0 0 0 0-4 1 1 0 0 0-1 1 1 1 0 0 0-1 1h-3z"/><path d="M7 12v10a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V12"/><path d="M12 8v16"/></svg>);
+        const IconSearch = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>);
         const IconRefresh = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>);
-        const IconShare = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>);
         const IconCpu = ({className}) => (<svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>);
 
         const SNAP_DIST = 0.5;
         const MOBILE_OFFSET_Y = 3.5;
-        const LINK_FB = 'https://www.facebook.com/groups/1747360393316932';
-        const LINK_SUPPORT = 'https://buy.stripe.com/dRm9AN8IgcrieVbbOT9EI00';
         const COLOR_RIM_P1 = '#3b82f6'; 
         const COLOR_RIM_P2 = '#ef4444'; 
 
@@ -50,6 +46,7 @@
             const [aiToughness, setAiToughness] = useState(5);
             const [showRules, setShowRules] = useState(false);
             const [isAiThinking, setIsAiThinking] = useState(false);
+            const [zoomIndex, setZoomIndex] = useState(null); // Null = full board, 1-9 = specific slice
 
             const [scores, setScores] = useState({ p1: 0, p2: 0 });
             const [matchWinner, setMatchWinner] = useState(null);
@@ -61,21 +58,37 @@
             const [selectedPiece, setSelectedPiece] = useState('unit'); 
             const [winReason, setWinReason] = useState('');
             const [ghostPos, setGhostPos] = useState(null); 
+            const [regionCounts, setRegionCounts] = useState({ spare: 0, street: 0, offroad: 0 });
             
             const canvasRef = useRef(null);
             const heatMapCanvasRef = useRef(null);
             const radiusMap = { unit: 1.0, pebble: 0.5, boulder: 1.5 };
             const currentRadius = radiusMap[selectedPiece];
 
+            // Define zoom regions (offset X, offset Y)
+            const getZoomOffset = (idx) => {
+                if (idx === null) return { x: 0, y: 0, factor: 1 };
+                const half = boardSize / 2;
+                const quarter = boardSize / 4;
+                const mapping = {
+                    1: { x: 0, y: 0 }, 2: { x: quarter, y: 0 }, 3: { x: half, y: 0 },
+                    4: { x: 0, y: quarter }, 5: { x: quarter, y: quarter }, 6: { x: half, y: quarter },
+                    7: { x: 0, y: half }, 8: { x: quarter, y: half }, 9: { x: half, y: half }
+                };
+                return { ...mapping[idx], factor: 2 };
+            };
+
+            const view = useMemo(() => getZoomOffset(zoomIndex), [zoomIndex, boardSize]);
+
             useEffect(() => {
                 const handleResize = () => {
-                    const safeDim = Math.min(window.innerWidth - 32, window.innerHeight - 380);
-                    setScale(Math.max(Math.floor(safeDim / boardSize), 12));
+                    const safeDim = Math.min(window.innerWidth - 32, window.innerHeight - 420);
+                    setScale(Math.max(Math.floor(safeDim / (boardSize / view.factor)), 12));
                 };
                 window.addEventListener('resize', handleResize);
                 handleResize();
                 return () => window.removeEventListener('resize', handleResize);
-            }, [boardSize, gameState]);
+            }, [boardSize, gameState, view]);
 
             const getClearance = (x, y, currentTires) => {
                 let minDist = Math.min(x, y, boardSize - x, boardSize - y);
@@ -171,6 +184,7 @@
                 setSelectedPiece('unit'); 
                 setGameState('playing'); 
                 setWinReason(''); 
+                setZoomIndex(null);
             };
 
             const handleRoundEnd = (winnerId, reason) => {
@@ -213,9 +227,15 @@
                 if (isAiThinking || (currentPlayer === 2 && opponentType === 'ai')) return;
                 const canvas = canvasRef.current; if (!canvas) return;
                 const rect = canvas.getBoundingClientRect();
-                let rX = (clientX - rect.left) * (canvas.width / rect.width) / scale;
-                let rY = (clientY - rect.top) * (canvas.height / rect.height) / scale;
-                if (isTouch) rY -= MOBILE_OFFSET_Y;
+                
+                // Adjust mouse coordinates based on zoom factor and offsets
+                let rawX = (clientX - rect.left) * (canvas.width / rect.width) / scale;
+                let rawY = (clientY - rect.top) * (canvas.height / rect.height) / scale;
+                if (isTouch) rawY -= MOBILE_OFFSET_Y;
+
+                let rX = rawX + view.x;
+                let rY = rawY + view.y;
+
                 let bX = rX, bY = rY, snapped = false, minGap = SNAP_DIST;
                 tires.forEach(t => {
                     const d = Math.sqrt((rX-t.x)**2 + (rY-t.y)**2);
@@ -234,41 +254,54 @@
             useEffect(() => {
                 if (gameState === 'setup' || !heatMapCanvasRef.current) return;
                 const ctx = heatMapCanvasRef.current.getContext('2d');
-                const w = boardSize * scale, h = boardSize * scale;
+                const w = (boardSize / view.factor) * scale;
+                const h = (boardSize / view.factor) * scale;
                 const img = ctx.createImageData(w, h);
                 const d = img.data;
+
+                let counts = { spare: 0, street: 0, offroad: 0 };
+
                 for (let y = 0; y < h; y++) {
                     for (let x = 0; x < w; x++) {
-                        const clear = getClearance(x/scale, y/scale, tires);
+                        const worldX = (x / scale) + view.x;
+                        const worldY = (y / scale) + view.y;
+                        const clear = getClearance(worldX, worldY, tires);
                         let r, g, b;
                         if (clear < 0) { r=20; g=10; b=10; } 
                         else if (clear < 0.5) { r=60; g=20; b=20; } 
-                        else if (clear < 1.0) { r=100; g=40; b=40; } 
-                        else if (clear < 1.5) { r=140; g=80; b=80; } 
-                        else { r=30; g=50; b=35; } 
+                        else if (clear < 1.0) { r=100; g=40; b=40; counts.spare++; } 
+                        else if (clear < 1.5) { r=140; g=80; b=80; counts.street++; } 
+                        else { r=30; g=50; b=35; counts.offroad++; } 
                         const i = (y * w + x) * 4;
                         d[i] = r; d[i+1] = g; d[i+2] = b; d[i+3] = 255;
                     }
                 }
                 ctx.putImageData(img, 0, 0);
-            }, [tires, boardSize, scale, gameState]);
+                setRegionCounts(counts);
+            }, [tires, boardSize, scale, gameState, view]);
 
             useEffect(() => {
                 if (gameState === 'setup' || !canvasRef.current) return;
                 const ctx = canvasRef.current.getContext('2d');
-                ctx.clearRect(0, 0, boardSize * scale, boardSize * scale);
+                ctx.clearRect(0, 0, (boardSize / view.factor) * scale, (boardSize / view.factor) * scale);
                 tires.forEach(t => {
-                    ctx.beginPath(); ctx.arc(t.x * scale, t.y * scale, t.r * scale, 0, Math.PI * 2);
+                    const screenX = (t.x - view.x) * scale;
+                    const screenY = (t.y - view.y) * scale;
+                    const screenR = t.r * scale;
+                    
+                    ctx.beginPath(); ctx.arc(screenX, screenY, screenR, 0, Math.PI * 2);
                     ctx.fillStyle = '#111'; ctx.fill();
-                    ctx.beginPath(); ctx.arc(t.x * scale, t.y * scale, t.r * 0.6 * scale, 0, Math.PI * 2);
+                    ctx.beginPath(); ctx.arc(screenX, screenY, screenR * 0.6, 0, Math.PI * 2);
                     ctx.fillStyle = t.player === 1 ? COLOR_RIM_P1 : COLOR_RIM_P2; ctx.fill();
                 });
                 if (ghostPos) {
-                    ctx.beginPath(); ctx.arc(ghostPos.x * scale, ghostPos.y * scale, currentRadius * scale, 0, 2 * Math.PI);
+                    const gx = (ghostPos.x - view.x) * scale;
+                    const gy = (ghostPos.y - view.y) * scale;
+                    ctx.beginPath(); ctx.arc(gx, gy, currentRadius * scale, 0, 2 * Math.PI);
                     ctx.strokeStyle = ghostPos.valid ? '#fff' : '#f00';
                     ctx.lineWidth = ghostPos.snapped ? 3 : 1; ctx.stroke();
                 }
-            }, [tires, ghostPos, currentRadius, scale, gameState]);
+            }, [tires, ghostPos, currentRadius, scale, gameState, view]);
 
             const getFinalMessage = () => {
                 if (gameState !== 'match_over') return winReason;
@@ -354,15 +387,15 @@
                                 
                                 <div className="flex gap-2 pt-2">
                                     <button onClick={() => setShowRules(true)} className="flex-1 py-3 bg-neutral-800 text-gray-300 text-[10px] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-700"><IconBook className="w-4 h-4"/> Rules</button>
-                                    <button onClick={() => window.open(LINK_SUPPORT, '_blank')} className="flex-1 py-3 bg-indigo-900/40 text-indigo-300 border border-indigo-900/40 text-[10px] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-900/60"><IconGift className="w-4 h-4"/> Support</button>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col lg:flex-row gap-6 items-center w-full max-w-4xl justify-center">
-                            <div className="relative rounded-2xl overflow-hidden border-4 border-neutral-800 bg-neutral-900 shadow-2xl shrink-0" style={{ width: boardSize * scale, height: boardSize * scale }}>
-                                <canvas ref={heatMapCanvasRef} width={boardSize * scale} height={boardSize * scale} className="absolute inset-0 opacity-80" />
-                                <canvas ref={canvasRef} width={boardSize * scale} height={boardSize * scale} 
+                        <div className="flex flex-col lg:flex-row gap-6 items-center w-full max-w-5xl justify-center">
+                            <div className="relative rounded-2xl overflow-hidden border-4 border-neutral-800 bg-neutral-900 shadow-2xl shrink-0" 
+                                 style={{ width: (boardSize / view.factor) * scale, height: (boardSize / view.factor) * scale }}>
+                                <canvas ref={heatMapCanvasRef} width={(boardSize / view.factor) * scale} height={(boardSize / view.factor) * scale} className="absolute inset-0 opacity-80" />
+                                <canvas ref={canvasRef} width={(boardSize / view.factor) * scale} height={(boardSize / view.factor) * scale} 
                                     onMouseMove={e => updateGhost(e.clientX, e.clientY)}
                                     onTouchMove={e => updateGhost(e.touches[0].clientX, e.touches[0].clientY, true)}
                                     onMouseUp={attemptPlace} onTouchEnd={attemptPlace}
@@ -375,39 +408,49 @@
                                     </div>
                                 )}
 
+                                {gameState === 'playing' && (
+                                    <div className="absolute bottom-4 left-4 z-20 flex gap-2">
+                                        <button onClick={() => setZoomIndex(zoomIndex ? null : 5)} 
+                                                className={`p-2 rounded-full border-2 shadow-lg transition-all ${zoomIndex ? 'bg-yellow-500 border-white text-black' : 'bg-black/60 border-white/20 text-white'}`}>
+                                            <IconSearch className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                )}
+
+                                {zoomIndex !== null && (
+                                    <div className="absolute top-4 left-4 z-20 grid grid-cols-3 gap-1 bg-black/80 p-1 rounded-lg border border-white/20">
+                                        {[1,2,3,4,5,6,7,8,9].map(i => (
+                                            <button key={i} onClick={() => setZoomIndex(i)} 
+                                                    className={`w-6 h-6 text-[10px] font-bold rounded flex items-center justify-center transition-all ${zoomIndex === i ? 'bg-yellow-500 text-black' : 'bg-neutral-800 text-gray-400'}`}>
+                                                {i}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+
                                 {(gameState === 'round_over' || gameState === 'match_over') && (
                                     <div className="absolute inset-0 z-50 bg-neutral-950/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in zoom-in duration-300">
                                         <IconTrophy className={`w-20 h-20 mb-4 animate-bounce-slow ${gameState === 'match_over' ? 'text-yellow-400' : 'text-gray-400'}`} />
                                         <h2 className="text-3xl font-black text-white italic mb-1 uppercase tracking-tighter">{gameState === 'match_over' ? 'Match Final' : 'Round Over'}</h2>
                                         <p className="text-lg text-gray-500 mb-8 font-bold italic">{getFinalMessage()}</p>
-                                        
-                                        <div className="flex flex-col gap-3 w-full max-w-xs">
-                                            {gameState === 'match_over' && (
-                                                <button onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(LINK_FB)}`, '_blank')} className="px-6 py-4 bg-[#1877F2] text-white font-black rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-[#155db2] active:scale-95 transition-all">
-                                                    <IconShare className="w-5 h-5" /> {matchWinner === 1 ? 'Share Victory' : 'Share Result'}
-                                                </button>
-                                            )}
-                                            <button onClick={gameState === 'match_over' ? () => setGameState('setup') : startRound} className="px-8 py-4 bg-white text-black font-black text-lg rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform uppercase italic">
-                                                {gameState === 'match_over' ? <IconRefresh className="w-5 h-5"/> : null}
-                                                {gameState === 'match_over' ? 'Main Menu' : 'Next Round'}
-                                            </button>
-                                        </div>
+                                        <button onClick={gameState === 'match_over' ? () => setGameState('setup') : startRound} className="px-8 py-4 bg-white text-black font-black text-lg rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform uppercase italic">
+                                            {gameState === 'match_over' ? 'Main Menu' : 'Next Round'}
+                                        </button>
                                     </div>
                                 )}
                             </div>
 
                             <div className="w-full max-w-sm flex flex-col gap-3 shrink-0">
                                 <div className="bg-neutral-800 p-3 rounded-xl flex justify-between items-center text-xs font-bold border border-neutral-700 shadow-xl">
-                                    <span className="text-gray-500 uppercase tracking-widest">Match Record</span>
+                                    <span className="text-gray-500 uppercase tracking-widest">Score</span>
                                     <div className="flex gap-4 font-black">
                                         <span className="text-blue-500">P1: {scores.p1}</span>
-                                        <span className="text-gray-500">vs</span>
                                         <span className="text-red-500">P2: {scores.p2}</span>
                                     </div>
                                 </div>
 
                                 <div className={`flex flex-col gap-2 p-3 rounded-xl border-2 transition-all ${currentPlayer === 1 && !isAiThinking ? 'border-yellow-400 bg-gray-800 scale-[1.03] shadow-2xl' : 'border-gray-800 bg-gray-900/50 opacity-40'}`}>
-                                    <span className="font-black text-blue-500 uppercase flex items-center gap-2 italic tracking-tighter">Player 1 {currentPlayer === 1 && <span className="text-[10px] bg-yellow-500 text-black px-2 py-0.5 rounded-full animate-pulse tracking-normal">TURN</span>}</span>
+                                    <span className="font-black text-blue-500 uppercase flex items-center gap-2 italic tracking-tighter">Player 1</span>
                                     <div className="flex gap-2">
                                         {['unit', 'pebble', 'boulder'].map(type => (
                                             <button key={type} onClick={() => !isAiThinking && currentPlayer === 1 && setSelectedPiece(type)} className={`flex-1 flex flex-col items-center p-2 rounded-lg transition-all ${selectedPiece === type && currentPlayer === 1 ? 'bg-neutral-700 ring-2 ring-white' : 'bg-black/40'}`}>
@@ -419,7 +462,7 @@
                                 </div>
 
                                 <div className={`flex flex-col gap-2 p-3 rounded-xl border-2 transition-all ${currentPlayer === 2 || isAiThinking ? 'border-yellow-400 bg-gray-800 scale-[1.03] shadow-2xl' : 'border-gray-800 bg-gray-900/50 opacity-40'}`}>
-                                    <span className="font-black text-red-500 uppercase flex items-center gap-2 italic tracking-tighter">{opponentType === 'ai' ? 'AI Bot' : 'Player 2'} {currentPlayer === 2 && <span className="text-[10px] bg-yellow-500 text-black px-2 py-0.5 rounded-full animate-pulse tracking-normal">TURN</span>}</span>
+                                    <span className="font-black text-red-500 uppercase flex items-center gap-2 italic tracking-tighter">{opponentType === 'ai' ? 'AI Bot' : 'Player 2'}</span>
                                     <div className="flex gap-2">
                                         {['unit', 'pebble', 'boulder'].map(type => (
                                             <div key={type} className={`flex-1 flex flex-col items-center p-2 rounded-lg bg-black/40`}>
@@ -430,11 +473,10 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-4 gap-1 text-[8px] font-mono text-center uppercase tracking-tighter text-gray-600 bg-neutral-950 p-2 rounded-lg border border-neutral-900 mt-2">
-                                    <div className="flex flex-col items-center gap-1"><div className="w-2 h-2 rounded-sm bg-[#1e3223]" /> OPEN</div>
-                                    <div className="flex flex-col items-center gap-1"><div className="w-2 h-2 rounded-sm bg-[#8c5050]" /> TIGHT</div>
-                                    <div className="flex flex-col items-center gap-1"><div className="w-2 h-2 rounded-sm bg-[#642828]" /> SPARE</div>
-                                    <div className="flex flex-col items-center gap-1"><div className="w-2 h-2 rounded-sm bg-[#140a0a]" /> BLOCKED</div>
+                                <div className="grid grid-cols-3 gap-1 text-[8px] font-mono text-center uppercase tracking-tighter bg-neutral-950 p-2 rounded-lg border border-neutral-900 mt-2">
+                                    <div className="flex flex-col items-center gap-1 text-green-500"><div className="w-2 h-2 rounded-sm bg-[#1e3223]" /> OFF-ROAD: {Math.floor(regionCounts.offroad / 100)}</div>
+                                    <div className="flex flex-col items-center gap-1 text-red-300"><div className="w-2 h-2 rounded-sm bg-[#8c5050]" /> STREET: {Math.floor(regionCounts.street / 100)}</div>
+                                    <div className="flex flex-col items-center gap-1 text-red-600"><div className="w-2 h-2 rounded-sm bg-[#642828]" /> SPARE: {Math.floor(regionCounts.spare / 100)}</div>
                                 </div>
                             </div>
                         </div>
