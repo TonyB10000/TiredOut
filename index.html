@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TIRED OUT - Clean Play Edition</title>
+    <title>TIRED OUT - Mathematical Edition</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -315,15 +315,30 @@
                 <div className="min-h-screen text-gray-100 flex flex-col items-center justify-center p-2 no-select relative overflow-hidden bg-black">
                     {showRules && (
                         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur flex items-center justify-center p-4">
-                            <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-                                <h2 className="text-2xl font-black text-white mb-4 flex items-center gap-2"><IconBook className="w-6 h-6 text-yellow-500"/> RULES</h2>
-                                <p className="text-sm text-gray-300 mb-6 leading-relaxed">Last player to park wins. If you cannot place a tire, you are <b>TIRED OUT</b>.</p>
-                                <ul className="text-xs space-y-3 mb-6 text-gray-400">
-                                    <li><b>Street Tires (∞):</b> Normal size. Standard play.</li>
-                                    <li><b>Off-Road (Limited):</b> Large. Kills lots of board space.</li>
-                                    <li><b>Spare (Limited):</b> Small. Use these to exploit tiny gaps.</li>
-                                </ul>
-                                <button onClick={() => setShowRules(false)} className="w-full py-4 bg-white text-black font-bold rounded-xl active:scale-95 transition-transform">Got it</button>
+                            <div className="bg-neutral-900 border border-neutral-700 rounded-2xl p-6 max-w-lg w-full shadow-2xl overflow-y-auto max-h-[90vh]">
+                                <h2 className="text-2xl font-black text-white mb-4 flex items-center gap-2 uppercase italic"><IconBook className="w-6 h-6 text-yellow-500"/> How to Play</h2>
+                                <div className="space-y-4 text-sm text-gray-300 leading-relaxed">
+                                    <p><b>Objective:</b> Be the last player to park a tire. If you have no room left to place any of your available tires, you are <b>TIRED OUT</b> and lose the round.</p>
+                                    
+                                    <div className="bg-black/30 p-3 rounded-lg border border-white/5">
+                                        <h3 className="text-white font-bold mb-1">The Tires:</h3>
+                                        <ul className="list-disc ml-4 space-y-1 text-xs">
+                                            <li><b className="text-blue-400">Street (∞):</b> Your standard piece. You never run out.</li>
+                                            <li><b className="text-green-400">Off-Road:</b> Large tires. Great for taking up space quickly.</li>
+                                            <li><b className="text-red-400">Spare:</b> Small tires. Use these to squeeze into tiny gaps near the end of the game.</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-black/30 p-3 rounded-lg border border-white/5">
+                                        <h3 className="text-white font-bold mb-1">Advanced Features:</h3>
+                                        <ul className="list-disc ml-4 space-y-1 text-xs">
+                                            <li><b>Heatmap:</b> The floor colors show you what fits where. <b>Green</b> fits anything. <b>Light Red</b> fits Street/Spare. <b>Dark Red</b> only fits Spares.</li>
+                                            <li><b>Zoom Panel:</b> Use the 1-9 grid to blow up a specific section of the lot to full size. This is vital for precision parking with Spare tires.</li>
+                                            <li><b>Region Counters:</b> The numbers at the bottom tell you exactly how many valid placement points are left for each tire size.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <button onClick={() => setShowRules(false)} className="w-full mt-6 py-4 bg-white text-black font-bold rounded-xl active:scale-95 transition-transform uppercase italic">Return to Tournament</button>
                             </div>
                         </div>
                     )}
@@ -377,12 +392,11 @@
                                     </div>
                                 </div>
                                 <button onClick={startMatch} className="w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl font-black text-black text-lg uppercase italic shadow-xl active:scale-95 transition-transform">Open The Lot</button>
-                                <button onClick={() => setShowRules(true)} className="w-full py-3 bg-neutral-800 text-gray-300 text-[10px] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-700"><IconBook className="w-4 h-4"/> Rules</button>
+                                <button onClick={() => setShowRules(true)} className="w-full py-3 bg-neutral-800 text-gray-300 text-[10px] font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-700 uppercase italic tracking-wider"><IconBook className="w-4 h-4 text-yellow-500"/> View Manual</button>
                             </div>
                         </div>
                     ) : (
                         <div className="flex flex-col lg:flex-row gap-6 items-center w-full max-w-5xl justify-center">
-                            {/* LOT VIEWPORT */}
                             <div className="relative rounded-2xl overflow-hidden border-4 border-neutral-800 bg-neutral-900 shadow-2xl shrink-0" 
                                  style={{ width: (boardSize / view.factor) * scale, height: (boardSize / view.factor) * scale }}>
                                 <canvas ref={heatMapCanvasRef} width={(boardSize / view.factor) * scale} height={(boardSize / view.factor) * scale} className="absolute inset-0 opacity-80" />
@@ -411,7 +425,6 @@
                                 )}
                             </div>
 
-                            {/* CONTROL PANEL */}
                             <div className="w-full max-w-sm flex flex-col gap-3 shrink-0">
                                 <div className="bg-neutral-800 p-3 rounded-xl flex justify-between items-center text-xs font-bold border border-neutral-700 shadow-xl">
                                     <span className="text-gray-500 uppercase tracking-widest">Score</span>
@@ -445,7 +458,6 @@
                                     </div>
                                 </div>
 
-                                {/* ZOOM CONTROLS PANEL */}
                                 <div className="bg-neutral-900 p-3 rounded-xl border border-neutral-800 flex items-center gap-4">
                                     <button onClick={() => setZoomIndex(zoomIndex ? null : 5)} 
                                             className={`p-4 rounded-xl border-2 transition-all ${zoomIndex ? 'bg-yellow-500 border-white text-black' : 'bg-neutral-800 border-neutral-700 text-gray-400'}`}>
@@ -462,7 +474,6 @@
                                     </div>
                                 </div>
 
-                                {/* INDICATORS PANEL */}
                                 <div className="grid grid-cols-3 gap-1 text-[8px] font-mono text-center uppercase tracking-tighter bg-neutral-950 p-2 rounded-lg border border-neutral-900">
                                     <div className="flex flex-col items-center gap-1 text-green-500"><div className="w-2 h-2 rounded-sm bg-[#1e3223]" /> OFF-ROAD: {Math.floor(regionCounts.offroad / 100)}</div>
                                     <div className="flex flex-col items-center gap-1 text-red-300"><div className="w-2 h-2 rounded-sm bg-[#8c5050]" /> STREET: {Math.floor(regionCounts.street / 100)}</div>
