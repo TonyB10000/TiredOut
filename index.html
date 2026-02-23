@@ -128,7 +128,12 @@
                     } else {
                         setTires(prev => [...prev, { x: spot.x, y: spot.y, r: radiusMap[bestPiece], player: 2 }]);
                         const setInv = setP2Inventory;
-                        if (bestPiece !== 'unit') setInv(prev => ({ ...prev, [bestPiece === 'pebble' ? 'pebbles' : 'boulders']: prev[bestPiece === 'pebble' ? 'pebbles' : 'boulders'] - 1 }));
+                        if (bestPiece !== 'unit') {
+                            setInv(prev => {
+                                const key = bestPiece === 'pebble' ? 'pebbles' : 'boulders';
+                                return { ...prev, [key]: Math.max(0, prev[key] - 1) };
+                            });
+                        }
                         setCurrentPlayer(1);
                     }
                     setIsAiThinking(false);
@@ -196,11 +201,24 @@
             const attemptPlace = () => {
                 if (isAiThinking || (currentPlayer === 2 && opponentType === 'ai')) return;
                 if (!ghostPos || !ghostPos.valid) return;
+                
+                // Guard: Check actual inventory
+                const inv = currentPlayer === 1 ? p1Inventory : p2Inventory;
+                if (selectedPiece === 'pebble' && inv.pebbles <= 0) return;
+                if (selectedPiece === 'boulder' && inv.boulders <= 0) return;
+
                 const newTires = [...tires, { x: ghostPos.x, y: ghostPos.y, r: currentRadius, player: currentPlayer }];
                 setTires(newTires);
+
                 if (selectedPiece !== 'unit') {
                     const setInv = currentPlayer === 1 ? setP1Inventory : setP2Inventory;
-                    setInv(prev => ({ ...prev, [selectedPiece === 'pebble' ? 'pebbles' : 'boulders']: prev[selectedPiece === 'pebble' ? 'pebbles' : 'boulders'] - 1 }));
+                    setInv(prev => {
+                        const key = selectedPiece === 'pebble' ? 'pebbles' : 'boulders';
+                        const newVal = Math.max(0, prev[key] - 1);
+                        // If player runs out, auto-switch back to unit
+                        if (newVal === 0 && currentPlayer === 1) setSelectedPiece('unit');
+                        return { ...prev, [key]: newVal };
+                    });
                 }
                 setGhostPos(null);
                 setCurrentPlayer(currentPlayer === 1 ? 2 : 1);
@@ -241,6 +259,10 @@
                 let rX = rawX + view.x;
                 let rY = rawY + view.y;
 
+                // Check inventory availability for the ghost ring
+                const inv = currentPlayer === 1 ? p1Inventory : p2Inventory;
+                const hasInventory = selectedPiece === 'unit' || (selectedPiece === 'pebble' ? inv.pebbles > 0 : inv.boulders > 0);
+
                 let bX = rX, bY = rY, snapped = false, minGap = SNAP_DIST;
                 tires.forEach(t => {
                     const d = Math.sqrt((rX-t.x)**2 + (rY-t.y)**2);
@@ -253,7 +275,7 @@
                         }
                     }
                 });
-                setGhostPos({ x: bX, y: bY, snapped, valid: getClearance(bX, bY, tires) >= currentRadius - 0.001 });
+                setGhostPos({ x: bX, y: bY, snapped, valid: hasInventory && getClearance(bX, bY, tires) >= currentRadius - 0.001 });
             };
 
             useEffect(() => {
